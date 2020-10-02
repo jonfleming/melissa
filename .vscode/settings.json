@@ -1,11 +1,14 @@
 {
-    "sqltools.connections": [
-        {
-            "previewLimit": 50,
-            "driver": "SQLite",
-            "name": "django",
-            "database": "${workspaceFolder:django}/db.sqlite3"
-        }
-    ],
-    "sqltools.useNodeRuntime": true
+  "sqltools.connections": [
+    {
+      "previewLimit": 50,
+      "driver": "SQLite",
+      "name": "django",
+      "database": "${workspaceFolder:django}/db.sqlite3"
+    }
+  ],
+  "sqltools.useNodeRuntime": true,
+  "python.linting.pylintEnabled": true,
+  "python.linting.enabled": true,
+  "python.linting.pylingArgs": ["--load-plugins=pylint_django"]
 }
