@@ -11,6 +11,10 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 """
 
 from pathlib import Path
+try:
+    from mysite import local_settings
+except ImportError:
+    raise Exception("A local_settings.py file is required to run this project")
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -20,7 +24,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '=e9y2*4i=4hzs8laa4=+9abl*r#91i6dmfm!#@6e5fo^n8pp_8'
+SECRET_KEY = local_settings.secret
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
