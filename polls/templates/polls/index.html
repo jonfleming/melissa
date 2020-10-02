@@ -1,3 +1,5 @@
+<h1>Polls</h1>
+
 {% if latest_question_list %}
 <ul>
   {% for question in latest_question_list %}
@@ -8,6 +10,8 @@
   </li>
   {% endfor %}
 </ul>
+
+<a href="/polls/resultslist">Results</a>
 {% else %}
 <p>No polls are available.</p>
 {% endif %}
