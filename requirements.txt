@@ -1,1 +1,3 @@
+chatterbot
+django
 pylint-django

@@ -1,0 +1,18 @@
+{% load static %}
+
+<link rel="stylesheet" type="text/css" href="{% static 'chat/style.css' %}" />
+<h1>Statements</h1>
+
+{% if statements %}
+<ul>
+  {% for statement in statements %}
+  <li>
+    <a href="{% url 'chat:detail' statement.id %}"
+      >{{ statement.statement_text }}</a
+    >
+  </li>
+  {% endfor %}
+</ul>
+{% else %}
+<p>No Statements are available.</p>
+{% endif %}
