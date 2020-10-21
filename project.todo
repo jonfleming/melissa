@@ -1,0 +1,28 @@
+UI:
+✔ Create tests @done (9/20/2020, 12:16:50 AM)
+✔ Create a transcript element that will hold the ongoing conversation @done (9/20/2020, 12:17:28 AM)
+✔ Capture 'final' and copy to 'transcript' @done (9/20/2020, 12:17:31 AM)
+✔ Use xmlhttprequest response.  Add to transcript. @done (9/20/2020, 12:17:34 AM)
+☐ Have one field for the final response (remove code that adds multiple 'final' elements)
+☐ Get female voice (Chrome)
+
+Neo4j: 
+✔ Point jonfleming.net and jonfleming.info to Predator @done (9/21/2020, 10:41:38 PM)
+
+Hosting:
+✔ Move jonfleming.com to github pages @done (10/20/2020, 8:58:08 PM) (Using InfinityFree)
+✔ Point fleming.ai to WordPress site @done (10/20/2020, 8:58:57 PM) (Using InfinityFree) 
+    ✔ Update settings @done (10/20/2020, 8:58:59 PM)
+    ✔ Remove Hellow world! @done (10/20/2020, 8:59:00 PM)
+✔ Create a VM (EC2) with neo4j image @done (9/20/2020, 2:59:54 PM)
+✔ ssh to clone wordnet_conceptnet_neo4j @done (9/20/2020, 2:59:58 PM)
+✔ import generated files to neo4j @done (9/20/2020, 3:00:05 PM)
+
+NeoChat:
+☐ Handle other sentence types
+✔ Add voice response @done (9/21/2020, 10:41:36 PM)
+☐ Convert "my" to "your", etc. in response
+☐ Who am I speaking to? 
+☐ Pass user's name to front end
+☐ Change AI to Melissa
+☐ Handle contractions

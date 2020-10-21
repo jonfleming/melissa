@@ -35,7 +35,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
-    'chat.apps.ChatConfig',
+    'info.apps.ChatConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -44,6 +44,14 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'chatterbot.ext.django_chatterbot',
 ]
+
+# ChatterBot settings
+
+CHATTERBOT = {
+    'name': 'Melissa',
+    'django_app_name': 'django_chatterbot',
+    'storage_adapter': 'chatterbot.storage.DjangoStorageAdapter'
+}
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
