@@ -15,61 +15,56 @@ function rem(time) {
     return (time-now) / 1000;
 }
 
-window.addEventListener("DOMContentLoaded", () => {
-    const button = document.getElementById("button");
-    const result = document.getElementById("result");
-    const transcript = document.getElementById("transcript");
-    const main = document.getElementsByTagName("main")[0];
-
+window.addEventListener('DOMContentLoaded', () => {
+    const $micButton = $('#mic');
+    const $result = $('#result');
+    const $message = $('#message');
+    const $input = $('.js-text');
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition
     let last = '';
 
-    if (typeof SpeechRecognition === "undefined") {
-        button.remove();
-        const message = document.getElementById("message");
-        message.removeAttribute("hidden");
-        message.setAttribute("aria-hidden", "false");
+    if (typeof SpeechRecognition === 'undefined') {
+        $micButton.attr('src', micpng);
+        $message.text("Unable to start speech recognition.");
     } else {
         let listening = false;
         const recognition = new SpeechRecognition();
         const start = () => {
-            log("recognition.start");
+            log('recognition.start');
             recognition.start();
-            button.textContent = "Stop listening";
-            main.classList.add("speaking");
+            $micButton.attr('src', micgif);
             listening = true;
         };
         const stop = () => {
-            log("recognition.stop");
+            log('recognition.stop');
             recognition.stop();
-            button.textContent = "Start listening";
-            main.classList.remove("speaking");
+            $micButton.attr('src', micpng);
             listening = false;
         };
         const onResult = event => {
-            log("onResult " + event.results.length);
-            result.innerHTML = "";
+            log('onResult ' + event.results.length);
+            $result.innerHTML = '';
             for (const res of event.results) {
-                const text = document.createTextNode(res[0].transcript);                
-                const p = document.createElement("p");
+                let p = '<p>' + res[0].transcript + '</p>';
+                $result.append(p);
                 if (res.isFinal) {
-                    p.classList.add("final");
-                }                
-                p.appendChild(text);
-                result.appendChild(p);                
-                log(`Transcript: ${res[0].transcript} final: ${res.isFinal}`);
+                    $result.last().addClass('final');
+                    log(`Transcript: ${res[0].transcript} final: ${res.isFinal}`);
+                    stop();
+                }
             }
         };
-        const onsoundend = event => {
+        const onSoundEnd = event => {
             log(`onSoundEnd last: ${last}`);
-            var final = document.getElementsByClassName("final");
-            if (final.length > 0) {
-                var text = final[0].innerText;
+            const $final = $('.final');
+            if ($final.length > 0) {
+                const text = $final.children().last().text();
                 if (text !== last) {
                     log(`sendInput final: ${text}`);
-                    sendInput(text);
+                    $input.val(text);
+                    submitInput();
                     last = text;
-                    result.innerHTML = "";
+                    $result.innerHTML = '';
                     stop();
                 }
             }
@@ -77,41 +72,41 @@ window.addEventListener("DOMContentLoaded", () => {
 
         recognition.continuous = true;
         recognition.interimResults = true;
-        recognition.addEventListener("result", onResult);
-        recognition.addEventListener("result", onsoundend);
+        recognition.onresult = onResult;
+        recognition.onend = onSoundEnd;
 
-        button.addEventListener("click", () => {
+        $micButton.click( function() {
             listening ? stop() : start();
         });
 
-        function sendInput(text) {
-            var req = new XMLHttpRequest();
-            var url = document.location.href + "input?text=" + text;
-        
-            transcript.value += 'User: ' + text + '\n'; 
-            
-            req.onreadystatechange = function (e) {
-                log(`readystatechange: ${this.readyState} status: ${this.status}`);
-                if (this.readyState === 4 && this.status === 200) {
-                    var response = JSON.parse(this.responseText);
-                    if (Array.isArray(response.reply)) {
-                        response.reply.forEach(item => {
-                            transcript.value += '\nMelissa: ' + item;
-                            textToSpeech(item);
-                        });
-                    } else {
-                        transcript.value += 'No response for AI\n'; 
-                    }
-                    transcript.value += '\n'; 
-                }
-            }
-        
-            log(`Request: ${url}`);
-            req.responseType = 'text';
-            req.open("GET", url);
-            req.timeout = 5000;
-            req.send();
-        }
+//        function sendInput(text) {
+//            var req = new XMLHttpRequest();
+//            var url = document.location.href + 'input?text=' + text;
+//        
+//            log.value += 'User: ' + text + '\n'; 
+//            
+//            req.onreadystatechange = function (e) {
+//                log(`readystatechange: ${this.readyState} status: ${this.status}`);
+//                if (this.readyState === 4 && this.status === 200) {
+//                    var response = JSON.parse(this.responseText);
+//                    if (Array.isArray(response.reply)) {
+//                        response.reply.forEach(item => {
+//                            log.value += '\nMelissa: ' + item;
+//                            textToSpeech(item);
+//                        });
+//                    } else {
+//                        log.value += 'No response for AI\n'; 
+//                    }
+//                    log.value += '\n'; 
+//                }
+//            }
+//        
+//            log(`Request: ${url}`);
+//            req.responseType = 'text';
+//            req.open('GET', url);
+//            req.timeout = 5000;
+//            req.send();
+//        }
     }
 });
 
@@ -132,7 +127,7 @@ function textToSpeech(text) {
     var available_voices = window.speechSynthesis.getVoices();
     var english_voice = '';
 
-    // find voice by language locale "en-US"
+    // find voice by language locale 'en-US'
     // if not then select the first voice
     for (var i = 0; i < available_voices.length; i++) {
         //    alert(available_voices[i].lang + ' ' + available_voices[i].name);
@@ -157,7 +152,7 @@ function textToSpeech(text) {
     // event after text has been spoken
     utter.onend = function () {
         // resume listening
-        document.getElementById("button").click();
+        $micButton.click();
     }
 
     // speak

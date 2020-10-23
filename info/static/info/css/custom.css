@@ -7,3 +7,12 @@
     max-height:200px;
     overflow-y:scroll;
 }
+
+.js-text {
+    width:600px;
+}
+
+.log {
+    display: block;
+    left-margin: 10px;
+}
