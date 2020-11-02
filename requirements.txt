@@ -33,6 +33,7 @@ lazy-object-proxy @ file:///D:/bld/lazy-object-proxy_1602435527887/work
 mathparse==0.1.2
 mccabe==0.6.1
 murmurhash==1.0.2
+neo4j==4.1.1
 nltk==3.5
 numpy==1.19.2
 packaging==20.4

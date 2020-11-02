@@ -46,6 +46,8 @@ class ChatterBotApiView(View):
 
         response = self.chatterbot.get_response(input_data)
 
+        # Send input to sentence classifyer and return response
+
         response_data = response.serialize()
 
         # Populate database with training data (only run once)
