@@ -10,45 +10,36 @@ function vlog(voice) {
     return {voiceURI: voice.voiceURI, name: voice.name, lang: voice.lang, default:voice.default};  
 }
 
-function rem(time) {
-    var now = Date.now();
-    return (time-now) / 1000;
-}
-
 window.addEventListener('DOMContentLoaded', () => {
-    const $micButton = $('#mic');
-    const $result = $('#result');
-    const $message = $('#message');
-    const $input = $('.js-text');
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition
     let last = '';
 
     if (typeof SpeechRecognition === 'undefined') {
-        $micButton.attr('src', micpng);
-        $message.text("Unable to start speech recognition.");
+        $('#mic').attr('src', micpng);
+        $('#message').text("Unable to start speech recognition.");
     } else {
         let listening = false;
         const recognition = new SpeechRecognition();
         const start = () => {
             log('recognition.start');
             recognition.start();
-            $micButton.attr('src', micgif);
+            $('#mic').attr('src', micgif);
             listening = true;
         };
         const stop = () => {
             log('recognition.stop');
             recognition.stop();
-            $micButton.attr('src', micpng);
+            $('#mic').attr('src', micpng);
             listening = false;
         };
         const onResult = event => {
             log('onResult ' + event.results.length);
-            $result.innerHTML = '';
+            $('#result').innerHTML = '';
             for (const res of event.results) {
                 let p = '<p>' + res[0].transcript + '</p>';
-                $result.append(p);
+                $('#result').append(p);
                 if (res.isFinal) {
-                    $result.last().addClass('final');
+                    $('#result').last().addClass('final');
                     log(`Transcript: ${res[0].transcript} final: ${res.isFinal}`);
                     stop();
                 }
@@ -61,10 +52,10 @@ window.addEventListener('DOMContentLoaded', () => {
                 const text = $final.children().last().text();
                 if (text !== last) {
                     log(`sendInput final: ${text}`);
-                    $input.val(text);
+                    $('.js-text').val(text);
                     submitInput();
                     last = text;
-                    $result.innerHTML = '';
+                    $('#result').innerHTML = '';
                     stop();
                 }
             }
@@ -75,38 +66,9 @@ window.addEventListener('DOMContentLoaded', () => {
         recognition.onresult = onResult;
         recognition.onend = onSoundEnd;
 
-        $micButton.click( function() {
+        $('#mic').click( function() {
             listening ? stop() : start();
         });
-
-//        function sendInput(text) {
-//            var req = new XMLHttpRequest();
-//            var url = document.location.href + 'input?text=' + text;
-//        
-//            log.value += 'User: ' + text + '\n'; 
-//            
-//            req.onreadystatechange = function (e) {
-//                log(`readystatechange: ${this.readyState} status: ${this.status}`);
-//                if (this.readyState === 4 && this.status === 200) {
-//                    var response = JSON.parse(this.responseText);
-//                    if (Array.isArray(response.reply)) {
-//                        response.reply.forEach(item => {
-//                            log.value += '\nMelissa: ' + item;
-//                            textToSpeech(item);
-//                        });
-//                    } else {
-//                        log.value += 'No response for AI\n'; 
-//                    }
-//                    log.value += '\n'; 
-//                }
-//            }
-//        
-//            log(`Request: ${url}`);
-//            req.responseType = 'text';
-//            req.open('GET', url);
-//            req.timeout = 5000;
-//            req.send();
-//        }
     }
 });
 
@@ -152,7 +114,7 @@ function textToSpeech(text) {
     // event after text has been spoken
     utter.onend = function () {
         // resume listening
-        $micButton.click();
+        $('#mic').click();
     }
 
     // speak
@@ -163,4 +125,17 @@ function say(id) {
     var text = document.getElementById(id).value;
     log('say:' + text);
     textToSpeech(text);
+}
+
+function voicePrompt(user) {
+    // Prompt user to click mic
+    const prompt = $('input.js-text').attr('placeholder');
+    textToSpeech(`Hello ${user}. ${prompt}`);
+    document.cookie = 'name=' + user;
+}
+
+const user_cookie = document.cookie.split('; ').find(row => row.startsWith('name='));
+if (user_cookie) {
+    user = user_cookie.split('=')[1];
+    $('#user').val(user);
 }

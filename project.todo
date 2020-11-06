@@ -3,7 +3,7 @@ UI:
 ✔ Create a transcript element that will hold the ongoing conversation @done (9/20/2020, 12:17:28 AM)
 ✔ Capture 'final' and copy to 'transcript' @done (9/20/2020, 12:17:31 AM)
 ✔ Use xmlhttprequest response.  Add to transcript. @done (9/20/2020, 12:17:34 AM)
-☐ Have one field for the final response (remove code that adds multiple 'final' elements)
+✔ Have one field for the final response (remove code that adds multiple 'final' elements) @done (11/5/2020, 7:16:58 PM)
 ☐ Get female voice (Chrome)
 
 Neo4j: 

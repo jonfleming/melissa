@@ -7,27 +7,33 @@ class sentence_classifyer:
         self.doc = nlp(sentence)
 
         self.sentence_types = [
-            { 'regex': '^how is', 'sentent_type': 'howIs', 'handler': self.questionHandler },
-            { 'regex': '^what is', 'sentent_type': 'whatIs', 'handler': self.questionHandler },
-            { 'regex': '^when ', 'sentent_type': 'whyIs', 'handler': self.questionHandler },
-            { 'regex': '^where is', 'sentent_type': 'whereIs', 'handler': self.questionHandler },
-            { 'regex': '^who is', 'sentent_type': 'whoIs', 'handler': self.questionHandler },
-            { 'regex': '^why is', 'sentent_type': 'whyIs', 'handler': self.questionHandler },
-            { 'regex': '^is ', 'sentent_type': 'whyIs', 'handler': self.questionHandler },
-            { 'regex': '^does ', 'sentent_type': 'whyIs', 'handler': self.questionHandler },
-            { 'regex': '^do ', 'sentent_type': 'whyIs', 'handler': self.questionHandler },
-            { 'regex': 'is a', 'sentent_type': 'isA', 'handler': self.statementHandler },
+            { 'regex': '^how is', 'sentence_type': 'howIs', 'handler': self.question_handler },
+            { 'regex': '^what is', 'sentence_type': 'whatIs', 'handler': self.question_handler },
+            { 'regex': '^when ', 'sentence_type': 'whyIs', 'handler': self.question_handler },
+            { 'regex': '^where is', 'sentence_type': 'whereIs', 'handler': self.question_handler },
+            { 'regex': '^who is', 'sentence_type': 'whoIs', 'handler': self.question_handler },
+            { 'regex': '^why is', 'sentence_type': 'whyIs', 'handler': self.question_handler },
+            { 'regex': '^is ', 'sentence_type': 'whyIs', 'handler': self.question_handler },
+            { 'regex': '^does ', 'sentence_type': 'whyIs', 'handler': self.question_handler },
+            { 'regex': '^do ', 'sentence_type': 'whyIs', 'handler': self.question_handler },
+            { 'regex': 'is a', 'sentence_type': 'isA', 'handler': self.statement_handler },
         ]
 
         self.sentence = sentence
         self.database = database
         self.limit = limit
+        self.sentence_type = 'unknown'
         self.handler = {}
 
-        self.sentence_type = next(stype for stype in self.sentence_types if re.search(stype.regex, sentence, re.IGNORECASE) )
-        return self.sentence_type
+        for sentence_type in self.sentence_types:
+            if re.search(sentence_type['regex'], sentence, re.IGNORECASE):
+                self.sentence_type = sentence_type['sentence_type']
+                self.handler = sentence_type['handler']
+                break
 
-    def get_indefinite_article(starts_with):
+
+
+    def get_indefinite_article(self, starts_with):
         if starts_with in ['a', 'e', 'i', 'o', 'u']:
             return 'an '
 
@@ -41,7 +47,7 @@ class sentence_classifyer:
     def strip_determiner(self, noun_chunk):
         word_list = noun_chunk.text.split()
         determiner = word_list.pop(0)
-        noun = word_list.join()
+        noun = ' '.join(word_list)
 
         if len(noun) > 0:
             return noun, determiner
@@ -50,11 +56,11 @@ class sentence_classifyer:
 
 
     def question_handler(self):
-        noun = self.doc.noun_chunks[1]
+        noun = list(self.doc.noun_chunks)[1]
         indefinite_article = None
         determiner = None
 
-        if self.has_determiner(self, noun):
+        if self.has_determiner(noun):
             noun, determiner = self.strip_determiner(noun)
             indefinite_article = self.get_indefinite_article(noun[0])
 
@@ -93,7 +99,7 @@ class sentence_classifyer:
             if len(records) > 0:
                 lemma = records[0]._fields[0]
 
-                queies = [
+                queries = [
                     f"CREATE (s:Synset {{" \
                         f"id: '{subject}.n.{next_id}', " \
                         f"name: '{subject}', " \
@@ -106,7 +112,7 @@ class sentence_classifyer:
                     f"MERGE(n) - [r: IsA {{ dataset: 'custom', weight: 1.0, added: 'true' }}] -> (s) RETURN s;"
                 ]
 
-                self.database.run_list(queies)
+                self.database.run_list(queries)
         else:
             query = f"CREATE (s:Subject {{id: '{subject}', pos: 'n', definition: '{definition}'}}) RETURN s;"
             self.database.run_query(query)

@@ -1,49 +1,61 @@
 {% load static%}
-<!doctype html>
+<!DOCTYPE html>
 <html>
   <head>
     <title>Django ChatterBot Example</title>
-    <link rel="stylesheet" href="{% static 'info/css/bootstrap.css' %}"/>
-    <link rel="stylesheet" href="{% static 'info/css/custom.css' %}"/>
+    <link rel="stylesheet" href="{% static 'info/css/bootstrap.css' %}" />
+    <link rel="stylesheet" href="{% static 'info/css/custom.css' %}" />
   </head>
   <body>
-
     {% include 'info/nav.html' %}
-
-    <div class="container">
-
+    <div id="init" class="row form-group w-25">
+      <label for="user" class="col-sm-1 pl-3">Name</label>
+      <div class="col-sm-4">
+        <input type="text" class="form-control w-25" id="user" />
+      </div>
+      <div class="col-sm-2">
+        <a id="start" class="btn btn-primary" data-toggle="collapse" href="#collapseContainer" role="button"
+          aria-expanded="false" aria-controls="collapseContainer">Start
+        </a>
+      </div>
+    </div>
+    <div class="container collapse" id="collapseContainer">
       <div class="jumbotron mt-1">
         <h1 class="jumbotron-heading text-xs-center"></h1>
         <p class="lead text-xs-center">
           This is a web app that allows you to talk to Melissa.
         </p>
 
-        <hr class="my-2">
+        <hr class="my-2" />
 
         <div class="row">
           <div class="col-xs-12 offset-xs-12">
             <p id="message"></p>
-            <ul class="list-group chat-log js-chat-log">
-            </ul>
+            <ul class="list-group chat-log js-chat-log"></ul>
             <div class="input-group input-group-lg">
-              <input type="text" class="form-control js-text" placeholder="Click the microphone and say something..."/>
+              <input
+                type="text"
+                class="form-control js-text"
+                placeholder="Click the microphone and say something..."
+              />
               <span class="input-group-btn">
-                <input id="mic" type="image" src="{% static 'info/images/mic.png' %}" /><br/>
+                <input
+                  id="mic"
+                  type="image"
+                  src="{% static 'info/images/mic.png' %}"
+                /><br />
                 <button class="btn btn-primary js-say">Submit</button>
               </span>
             </div>
-            
           </div>
         </div>
-
       </div>
-
     </div>
 
-    <hr class="my-3">
-    <div class="row" style="display: block;">
+    <hr class="my-3" />
+    <div class="row" style="display: none">
       {% csrf_token %}
-      <textarea id="log" rows='20' cols='100'></textarea>
+      <textarea id="log" rows="20" cols="100"></textarea>
 
       <div id="result"></div>
     </div>
@@ -57,5 +69,17 @@
     <script src="{% static 'info/js/bootstrap.js' %}"></script>
     <script src="{% static 'info/js/chat.js' %}"></script>
     <script src="{% static 'info/js/speech.js' %}"></script>
- </body>
+    <script>
+      $("#user").keypress(function(e){
+        if(e.which == 13) {
+          $("#start").click();
+        }
+      });
+      $("#start").click(function() {
+        const user = $('#user').val();
+        voicePrompt(user);
+        $("#init").hide();
+      });
+    </script>
+  </body>
 </html>
