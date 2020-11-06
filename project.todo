@@ -4,7 +4,7 @@ UI:
 ✔ Capture 'final' and copy to 'transcript' @done (9/20/2020, 12:17:31 AM)
 ✔ Use xmlhttprequest response.  Add to transcript. @done (9/20/2020, 12:17:34 AM)
 ✔ Have one field for the final response (remove code that adds multiple 'final' elements) @done (11/5/2020, 7:16:58 PM)
-☐ Get female voice (Chrome)
+✔ Get female voice (Chrome) @done (11/6/2020, 1:20:26 AM)
 
 Neo4j: 
 ✔ Point jonfleming.net and jonfleming.info to Predator @done (9/21/2020, 10:41:38 PM)
@@ -19,10 +19,11 @@ Hosting:
 ✔ import generated files to neo4j @done (9/20/2020, 3:00:05 PM)
 
 NeoChat:
+☐ Parse the sentence and add the fact to wordnet/conceptnet if it doesn't already exist
 ☐ Handle other sentence types
 ✔ Add voice response @done (9/21/2020, 10:41:36 PM)
 ☐ Convert "my" to "your", etc. in response
 ☐ Who am I speaking to? 
-☐ Pass user's name to front end
+✔ Pass user's name to front end @done (11/6/2020, 1:19:52 AM) (using cookies)
 ☐ Change AI to Melissa
 ☐ Handle contractions
