@@ -19,6 +19,8 @@ except ImportError:
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+# Sphinx Docs path
+DOCS_ROOT = BASE_DIR / 'docs' / 'build' / 'html'
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
@@ -35,6 +37,7 @@ ALLOWED_HOSTS = ['localhost','jonfleming.info', '127.0.0.1']
 # Application definition
 
 INSTALLED_APPS = [
+    'docs',
     'info.apps.ChatConfig',
     'django.contrib.admin',
     'django.contrib.auth',

@@ -6,6 +6,9 @@ pip install spacy
 pip install django
 pip install numpy==1.19.2
 pip install neo4j==4.1.1
+pip install sphinx
+pip install recommonmark
+pip install django-docs
 python -m spacy download en
 python -m spacy download en_core_web_md
 python -m spacy download en_core_web_lg

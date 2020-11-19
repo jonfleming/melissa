@@ -19,7 +19,7 @@ settings.configure()
 
 # -- Project information -----------------------------------------------------
 
-project = 'Melissa'
+project = 'Fleming AI'
 copyright = '2020, Jon Fleming'
 author = 'Jon Fleming'
 
@@ -48,7 +48,7 @@ exclude_patterns = []
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
 #
-html_theme = 'alabaster'
+html_theme = 'bizstyle'
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
