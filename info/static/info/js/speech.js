@@ -130,7 +130,8 @@ function say(id) {
 function voicePrompt(user) {
     // Prompt user to click mic
     const prompt = $('input.js-text').attr('placeholder');
-    textToSpeech(`Hello ${user}. ${prompt}`);
+    //textToSpeech(`Hello ${user}. ${prompt}`);
+    sayText(`Hello ${user}. ${prompt}`,2,1,3);
     document.cookie = 'name=' + user;
 }
 

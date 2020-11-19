@@ -10,5 +10,9 @@
   "sqltools.useNodeRuntime": true,
   "python.linting.pylintEnabled": true,
   "python.linting.enabled": true,
-  "python.linting.pylingArgs": ["--load-plugins=pylint_django"]
+  "python.linting.pylingArgs": [
+    "--load-plugins=pylint_django"
+  ],
+  "restructuredtext.confPath": "${workspaceFolder}\\docs\\source",
+  "restructuredtext.linter.disabled": true
 }

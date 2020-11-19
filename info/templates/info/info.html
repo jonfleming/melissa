@@ -19,8 +19,8 @@
         </a>
       </div>
     </div>
-    <div class="container collapse" id="collapseContainer">
-      <div class="jumbotron mt-1">
+    <div class="row container collapse" id="collapseContainer">
+      <div class="jumbotron col-sm-6 mt-1">
         <h1 class="jumbotron-heading text-xs-center"></h1>
         <p class="lead text-xs-center">
           This is a web app that allows you to talk to Melissa.
@@ -49,6 +49,14 @@
             </div>
           </div>
         </div>
+
+      </div>
+      <div class="col-sm-6">
+        <script type="text/javascript" src="//vhss-d.oddcast.com/vhost_embed_functions_v2.php?acc=7817314&js=0">
+        </script>
+        <script type="text/javascript">
+          AC_VHost_Embed(7817314,300,400,'',1,1, 2714913, 0,1,0,'56d0583e963c97c521d6a347573c325c',0);
+        </script>
       </div>
     </div>
 
@@ -67,8 +75,8 @@
     <script src="{% static 'info/js/jquery.js' %}"></script>
     <script src="{% static 'info/js/js.cookie.js' %}"></script>
     <script src="{% static 'info/js/bootstrap.js' %}"></script>
-    <script src="{% static 'info/js/chat.js' %}"></script>
     <script src="{% static 'info/js/speech.js' %}"></script>
+    <script src="{% static 'info/js/chat.js' %}"></script>
     <script>
       $("#user").keypress(function(e){
         if(e.which == 13) {
@@ -80,6 +88,15 @@
         voicePrompt(user);
         $("#init").hide();
       });
+    </script>
+    <script type="text/javascript">
+      //AC_VHost_Embed(7817314,300,400,'',1,1, 2714913, 0,1,0,'56d0583e963c97c521d6a347573c325c',0);
+
+      function vh_sceneLoaded()
+      {
+        //the scene begins playing, add actions here
+        //sayText('Welcome to our text to speech A P I example',2,1,3);
+      }
     </script>
   </body>
 </html>

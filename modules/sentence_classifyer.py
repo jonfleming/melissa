@@ -107,8 +107,8 @@ class sentence_classifyer:
 
                 response = Statement(f"I thought {subject} is a {lemma}.  Is {subject} also {definition}?")
         else:
-            query = f"CREATE (s:Subject {{id: '{subject}', pos: 'n', definition: '{definition}'}}) RETURN s;"
-            self.database.run_query(query)
-            response = Statement(f"I've added {subject} is {definition} to my database")
-
+            # query = f"CREATE (s:Subject {{id: '{subject}', pos: 'n', definition: '{definition}'}}) RETURN s;"
+            # self.database.run_query(query)
+            # response = Statement(f"I've added {subject} is {definition} to my database")
+            pass
         return response

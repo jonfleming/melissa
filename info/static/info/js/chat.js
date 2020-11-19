@@ -37,7 +37,7 @@ $.ajaxSetup({
             contentType: 'application/json'
         }).done(function(statement) {
             createRow(statement.text);
-
+            sayText(statement.text,2,1,3);
             // Clear the input field
             $input.val('');
 
