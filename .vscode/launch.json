@@ -18,6 +18,16 @@
       "program": "${workspaceFolder}\\manage.py",
       "args": ["runserver"],
       "console": "integratedTerminal",
-      "django": true
+      "django": true,
+    },
+    {
+      "name": "Debug Tests",
+      "type": "python",
+      "request": "launch",
+      "program": "${workspaceFolder}\\manage.py",
+      "args": ["test", "info.tests", ],
+      "console": "integratedTerminal",
+      "django": true,
+    }
   ]
 }

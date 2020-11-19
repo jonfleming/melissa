@@ -1,5 +1,8 @@
+from chatterbot.conversation import Statement
+from modules.en_article import Article
 import spacy
 import re
+import random
 
 class sentence_classifyer:
     def __init__(self, sentence, database, limit = 5):
@@ -23,7 +26,7 @@ class sentence_classifyer:
         self.database = database
         self.limit = limit
         self.sentence_type = 'unknown'
-        self.handler = {}
+        self.handler = None
 
         for sentence_type in self.sentence_types:
             if re.search(sentence_type['regex'], sentence, re.IGNORECASE):
@@ -31,90 +34,81 @@ class sentence_classifyer:
                 self.handler = sentence_type['handler']
                 break
 
-
-
-    def get_indefinite_article(self, starts_with):
-        if starts_with in ['a', 'e', 'i', 'o', 'u']:
-            return 'an '
-
-        return 'a '
+    def get_indefinite_article(self, noun):
+        result = Article.getInstance().query(noun)
+        return result['article'] + ' '
 
     def has_determiner(self, noun_chunk):
         token = self.doc[noun_chunk.start]
-        return token.pos_ == 'DET'
-            
+        return (token.pos_ == 'DET')
+
+    def get_determiner(self, noun_chunk):
+        determiner = None
+        tag = None
+        if self.has_determiner(noun_chunk):
+            determiner = self.doc[noun_chunk.start].text
+            tag = 'definite' if determiner == 'the' else 'indefinite'
+        
+        return determiner, tag              
 
     def strip_determiner(self, noun_chunk):
-        word_list = noun_chunk.text.split()
-        determiner = word_list.pop(0)
-        noun = ' '.join(word_list)
-
-        if len(noun) > 0:
-            return noun, determiner
-        else:
-            return determiner, None
-
-
-    def question_handler(self):
-        noun = list(self.doc.noun_chunks)[1]
-        indefinite_article = None
-        determiner = None
-
-        if self.has_determiner(noun):
-            noun, determiner = self.strip_determiner(noun)
-            indefinite_article = self.get_indefinite_article(noun[0])
-
-        query = f"MATCH (s:Lemma {{name: '{noun}', pos:'n'}})-[r]->(n:Synset)" \
-            f" RETURN n AS node LIMIT {self.limit}" \
-            f" UNION ALL MATCH (s:Subject {{id: '{noun}', pos:'n'}})" \
-            f" RETURN s AS node LIMIT {self.limit}"
-
-        return noun, query, indefinite_article, determiner
-
-    def statement_handler(self):
-        subject = self.doc.noun_chunks[0]
-        indefinate_artle = None
-        determiner = None
-
-        if self.has_determiner(subject):
-            subject, determiner = self.strip_determiner(subject)
-
-        subject = subject.replace(' ', '_')
-        predicate = self.doc.noun_chunks[1]
-        article = self.get_indefinite_article(predicate[0])
-        definition = f'{article}{predicate}'
+        determiner = self.get_determiner(noun_chunk)
+        noun = noun_chunk.text
 
         if determiner:
-            existing_synsets = f"MATCH (s:Synset) WHERE s.id STARTS WITH '{subject}.' RETURN COLLECT(right(s.id, 2));"
-            synset_records = self.database.run_query(existing_synsets)
-            ids = synset_records[0]._fields[0].sort()
-            next_id = '01'
+            start = noun_chunk.start + 1
+            end = noun_chunk.end
+            noun = self.doc[start:end].text
+            
+        return noun
+        
+    def question_handler(self):
+        noun_chunk = list(self.doc.noun_chunks)[1]
+        indefinite_article = None
+        determiner, tag = self.get_determiner(noun_chunk)
 
-            if len(ids) > 0:
-                next_id = str(int(ids[-1:]) + 1).rjust(2, '0')
+        subject = self.strip_determiner(noun_chunk) if determiner else noun_chunk.text
+        indefinite_article = self.get_indefinite_article(subject)
 
+        query = f"MATCH (s:Lemma {{name: '{subject}', pos:'n'}})-[r]->(n:Synset)" \
+            f" RETURN n AS node LIMIT {self.limit}" \
+            f" UNION ALL MATCH (s:Subject {{id: '{subject}', pos:'n'}})" \
+            f" RETURN s AS node LIMIT {self.limit}"
+
+        records = self.database.run_query(query)
+        reply = None
+
+        if (len(records) > 0):
+            n = random.randint(0, len(records) - 1)
+            definition = records[n]
+            has_determiner = definition.startswith('a ') or definition.startswith('the ')
+            prefix = f'{indefinite_article}{subject} is' if has_determiner else f'{indefinite_article}{subject} is a'
+            reply = f'{prefix} {definition}'
+    
+        return Statement(reply)
+
+    def statement_handler(self):
+        noun_chunk = list(self.doc.noun_chunks)[0]
+        determiner = None
+
+        determiner, tag = self.get_determiner(noun_chunk)
+        subject = self.strip_determiner(noun_chunk) if determiner else noun_chunk.text
+        
+        subject = subject.replace(' ', '_')
+        definition = list(self.doc.noun_chunks)[1].text
+        response = None
+        
+        if determiner:
             existing_lemma = f"MATCH (n:Lemma {{id: '{subject}.n'}} ) RETURN n"
             records = self.database.run_query(existing_lemma)
 
             if len(records) > 0:
                 lemma = records[0]._fields[0]
 
-                queries = [
-                    f"CREATE (s:Synset {{" \
-                        f"id: '{subject}.n.{next_id}', " \
-                        f"name: '{subject}', " \
-                        f"pos: 'n', " \
-                        f"definition: '{definition}', " \
-                        f"added:'true'" \
-                    f"}}) RETURN s;", 
-                    f"MATCH (n:Lemma {{name: '{subject}', pos:'n'}}) " \
-                    f"MATCH (s: Synset {{ id: '{subject}.n.{next_id}' }}) " \
-                    f"MERGE(n) - [r: IsA {{ dataset: 'custom', weight: 1.0, added: 'true' }}] -> (s) RETURN s;"
-                ]
-
-                self.database.run_list(queries)
+                response = Statement(f"I thought {subject} is a {lemma}.  Is {subject} also {definition}?")
         else:
             query = f"CREATE (s:Subject {{id: '{subject}', pos: 'n', definition: '{definition}'}}) RETURN s;"
             self.database.run_query(query)
+            response = Statement(f"I've added {subject} is {definition} to my database")
 
-        return subject, indefinate_artle, determiner
+        return response

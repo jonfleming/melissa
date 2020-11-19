@@ -1,6 +1,4 @@
 """Chat Views module"""
-import json
-import random
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render
 from django.views.generic.base import TemplateView
@@ -12,23 +10,7 @@ from chatterbot.trainers import ChatterBotCorpusTrainer
 from chatterbot.conversation import Statement
 from modules.sentence_classifyer import sentence_classifyer
 from modules.neograph import neograph
-
-def get_what_is(input, database):
-    noun, query, indefinite_article, determiner = input.handler()
-    records = database.run_query(query)
-    reply = None
-
-    if (len(records) > 0):
-        n = random.randint(0, len(records) - 1)
-        definition = records[n]
-        has_determiner = definition.startswith('a ') or definition.startswith('the ')
-        prefix = f'{indefinite_article}{noun} is' if has_determiner else f'{indefinite_article}{noun} is a'
-        reply = f'{prefix} {definition}'
-    
-    return Statement(reply)
-
-def save_fact(input, database):
-    pass
+import json
 
 class ChatterBotAppView(TemplateView):
     template_name = 'info/info.html'
@@ -67,8 +49,7 @@ class ChatterBotApiView(View):
         # Send input to sentence classifyer and return response
         database = neograph()
         parsed_input = sentence_classifyer(input_data['text'], database)
-        process = {'whatIs': get_what_is, 'isA':save_fact, 'unknown':self.chat_response}
-        response = process[parsed_input.sentence_type](parsed_input, database)
+        response = parsed_input.handler() if parsed_input.handler else self.chat_handler(parsed_input)
         response_data = response.serialize()
 # response: id, text, searc_text, conversation, persona, tags, in_response_to, created_at
 
@@ -86,6 +67,7 @@ class ChatterBotApiView(View):
             'name': self.chatterbot.name
         })
 
-    def chat_response(self, input, database):
+    def chat_handler(self, input):
         statement = Statement(input.sentence)
-        return self.chatterbot.get_response(statement)
+        response = self.chatterbot.get_response(statement)
+        return Statement(response.text)

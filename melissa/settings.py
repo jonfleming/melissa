@@ -29,7 +29,7 @@ SECRET_KEY = local_settings.secret
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost','jonfleming.info']
+ALLOWED_HOSTS = ['localhost','jonfleming.info', '127.0.0.1']
 
 
 # Application definition
@@ -92,6 +92,7 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
+        'TEST_NAME': BASE_DIR / 'db.sqlite3',
     }
 }
 

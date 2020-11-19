@@ -18,3 +18,5 @@ Outline 11/1/20
     For all other sentences
         Return chatterbot response
 
+    Check project.todo
+    

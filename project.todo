@@ -19,11 +19,11 @@ Hosting:
 ✔ import generated files to neo4j @done (9/20/2020, 3:00:05 PM)
 
 NeoChat:
+✔ Who am I speaking to? @done (11/9/2020, 7:38:07 PM) Prompts for name on start
 ☐ Parse the sentence and add the fact to wordnet/conceptnet if it doesn't already exist
 ☐ Handle other sentence types
 ✔ Add voice response @done (9/21/2020, 10:41:36 PM)
 ☐ Convert "my" to "your", etc. in response
-☐ Who am I speaking to? 
 ✔ Pass user's name to front end @done (11/6/2020, 1:19:52 AM) (using cookies)
 ☐ Change AI to Melissa
 ☐ Handle contractions
