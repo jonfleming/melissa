@@ -12,9 +12,10 @@
 #
 import os
 import sys
+from django.conf import settings
 sys.path.insert(0, os.path.abspath('..'))
 os.environ['DJANGO_SETTINGS_MODULE'] = 'melissa.settings'
-django.setup()
+settings.configure()
 
 # -- Project information -----------------------------------------------------
 

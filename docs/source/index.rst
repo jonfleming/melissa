@@ -10,7 +10,7 @@ Welcome to Melissa
    :maxdepth: 2
    :caption: Contents:
 
-
+   modules/models
 
 Indices and tables
 ==================
