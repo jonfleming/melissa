@@ -14,5 +14,6 @@
     "--load-plugins=pylint_django"
   ],
   "restructuredtext.confPath": "${workspaceFolder}\\docs\\source",
-  "restructuredtext.linter.disabled": true
+  "restructuredtext.linter.disabled": true,
+  "jupyter.jupyterServerType": "remote"
 }

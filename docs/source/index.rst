@@ -10,6 +10,7 @@ Welcome to Fleming AI
    :maxdepth: 2
    :caption: Contents:
 
+   Configuration
    modules/models
 
 Indices and tables

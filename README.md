@@ -17,6 +17,9 @@ Outline 11/1/20
 
     For all other sentences
         Return chatterbot response
+        Return GPT3 response
 
+    Speak text using SitePal character
+    
     Check project.todo
     

@@ -20,6 +20,8 @@ class sentence_classifyer:
             { 'regex': '^does ', 'sentence_type': 'whyIs', 'handler': self.question_handler },
             { 'regex': '^do ', 'sentence_type': 'whyIs', 'handler': self.question_handler },
             { 'regex': 'is a', 'sentence_type': 'isA', 'handler': self.statement_handler },
+            { 'regex': 'tell me', 'sentence_type': 'command', 'handler': self.statement_handler },
+            { 'regex': 'give me', 'sentence_type': 'command', 'handler': self.statement_handler },
         ]
 
         self.sentence = sentence
@@ -75,7 +77,7 @@ class sentence_classifyer:
             f" UNION ALL MATCH (s:Subject {{id: '{subject}', pos:'n'}})" \
             f" RETURN s AS node LIMIT {self.limit}"
 
-        records = self.database.run_query(query)
+        records = self.database.run_query(query, 'definition')
         reply = None
 
         if (len(records) > 0):
@@ -100,7 +102,7 @@ class sentence_classifyer:
         
         if determiner:
             existing_lemma = f"MATCH (n:Lemma {{id: '{subject}.n'}} ) RETURN n"
-            records = self.database.run_query(existing_lemma)
+            records = self.database.run_query(existing_lemma, 'name')
 
             if len(records) > 0:
                 lemma = records[0]._fields[0]

@@ -13,6 +13,10 @@ function vlog(voice) {
 window.addEventListener('DOMContentLoaded', () => {
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition
     let last = '';
+    if (!isChrome) {
+        $('#message').text("Speech Recognistion requires Chrome");
+        return;
+    }
 
     if (typeof SpeechRecognition === 'undefined') {
         $('#mic').attr('src', micpng);

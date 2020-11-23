@@ -1,10 +1,21 @@
 import spacy
+import pytextrank
 
-sentence = 'what is the bike?'
-#sentence = 'displaCy uses CSS and JavaScript to show you how computers understand language'
-nlp = spacy.load('en')
+sentence = 'Please give me the large nail; it’s the only one strong enough to hold this painting.'
+nlp = spacy.load('en_core_web_lg')
+
+# add PyTextRank to the spaCy pipeline
+tr = pytextrank.TextRank()
+nlp.add_pipe(tr.PipelineComponent, name="textrank", last=True)
+
 doc = nlp(sentence)
 
+for p in doc._.phrases:
+    print('{:.4f} {:5d}  {}'.format(p.rank, p.count, p.text))
+    print(p.chunks)
+
+exit(0)
+#region Noun Chunks
 # noun_chunks:
 #   text: a bike
 #   lemma_: a bike
@@ -28,3 +39,4 @@ for nc in doc.noun_chunks:
     #         print('  ' + attr, eval('nc.' + attr))
     token = doc[nc.start] 
     print(token.text, ':', token.pos_, token.tag_)
+#endregion
