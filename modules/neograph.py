@@ -2,7 +2,7 @@ from neo4j import GraphDatabase
 import os
 import sys
 
-uri = 'bolt://localhost:7687' #os.getenv('neouri')
+uri = os.getenv('neouri')
 user = os.getenv('neousername')
 password = os.getenv('neopassword')
 WORDNET = 'wordnetconceptnet'
