@@ -5,37 +5,20 @@ UI:
 ✔ Use xmlhttprequest response.  Add to transcript. @done (9/20/2020, 12:17:34 AM)
 ✔ Have one field for the final response (remove code that adds multiple 'final' elements) @done (11/5/2020, 7:16:58 PM)
 ✔ Get female voice (Chrome) @done (11/6/2020, 1:20:26 AM)
-☐ Chrome Browser detection: Code Block: {
-    var isChromium = window.chrome;
-    var winNav = window.navigator;
-    var vendorName = winNav.vendor;
-    var isOpera = typeof window.opr !== "undefined";
-    var isIEedge = winNav.userAgent.indexOf("Edge") > -1;
-    var isIOSChrome = winNav.userAgent.match("CriOS");
-    var isChrome;
-
-    if (isIOSChrome) {
-       isChrome = false;
-    } else if(
-      isChromium !== null &&
-      typeof isChromium !== "undefined" &&
-      vendorName === "Google Inc." &&
-      isOpera === false &&
-      isIEedge === false
-    ) {
-       isChrome = true;
-    } else { 
-        isChrome = false;
-    }}
-
-☐ 
+✔ Chrome Browser detection: @done (11/23/2020, 5:00:17 PM)
 
 Neo4j: 
 ✔ Point jonfleming.net and jonfleming.info to Predator @done (9/21/2020, 10:41:38 PM)
 ☐ Checking for existing lemma:
     ✔ Need separate neograph.runner (lemma doesn't have a 'definition' attribute) @done (11/22/2020, 9:44:47 PM)
-    ☐ If we want to display the existing def, why not use the whatIs response?
-    ☐ If we are adding a fact to a lemma we created, need to display existing facts...
+    WhatIs Question: 
+    ☐ query with UNION ALL to get added definition or definition with lowest id.
+    IsA Statement:
+    ☐ query with UNION ALL to see if existing definitions are similar to Statement
+        ☐ If existing defintion is similar replay with I knew that ...(existing definition)
+        ☐ Else, this is a new fact.  Add a new Synset and IsA Relationship. (requires nextId)
+        ☐ Reply with I've added that fact to my database
+
     
 Hosting:
 ✔ Move jonfleming.com to github pages @done (10/20/2020, 8:58:08 PM) (Using InfinityFree)
