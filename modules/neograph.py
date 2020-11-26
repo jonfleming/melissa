@@ -15,27 +15,33 @@ class neograph:
         self.session = self.driver.session(database=database)
         return self.session
     
-    def runner(self, tx, query, property):
+    def runner(self, tx, query):
         records = []
         result = tx.run(query)
-        for record in result:
-            records.append(record[0]._properties[property])
-
+        for item in result:
+            record = {}
+            for key in result.keys():
+                record[key] = item[key] 
+            records.append(record)
+            
         return records
 
-    def run_query(self, query, property):
+    def run_query(self, query):
         print(query)
         try:
-            records = self.get_session(WORDNET).read_transaction(self.runner, query, property)
-            return records
+            return  self.get_session(WORDNET).read_transaction(self.runner, query)
         except:
             print('Error', sys.exc_info())
+            return []
 
     def run_list(self, queries):
         for query in queries:
             print(query)
-            result = self.get_session(WORDNET).write_transaction(self.runner, query)
-            
+            try:
+                self.get_session(WORDNET).write_transaction(self.runner, query)
+            except:
+                print('Error', sys.exc_info())
+                                
     def close(self):
         self.driver.close()
 

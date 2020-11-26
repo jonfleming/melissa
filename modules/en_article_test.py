@@ -1,4 +1,4 @@
-from en_article import Article
+from .en_article import Article
 
 def test(phrase):
     """
