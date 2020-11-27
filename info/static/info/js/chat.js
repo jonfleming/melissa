@@ -35,14 +35,16 @@ $.ajaxSetup({
             url: chatterbotUrl,
             data: JSON.stringify(inputData),
             contentType: 'application/json'
-        }).done(function(statement) {
-            createRow(statement.text);
-            sayText(statement.text,2,1,3);
-            // Clear the input field
-            $input.val('');
-
-            // Scroll to the bottom of the chat interface
-            $chatlog[0].scrollTop = $chatlog[0].scrollHeight;
+        }).done(function (statement) {
+            if (statement.text) {
+                createRow(statement.text);
+                sayText(statement.text,2,1,3);
+                // Clear the input field
+                $input.val('');
+    
+                // Scroll to the bottom of the chat interface
+                $chatlog[0].scrollTop = $chatlog[0].scrollHeight;    
+            }
         }).fail(function(jdXHR, textStatus) {
             // TODO: Handle errors
             alert('ajax request failed');

@@ -11,7 +11,9 @@ from chatterbot.conversation import Statement
 from modules.sentence_classifyer import sentence_classifyer
 from modules.neograph import neograph
 import json
+import logging
 
+logger = logging.getLogger(__name__)
 class ChatterBotAppView(TemplateView):
     template_name = 'info/info.html'
 
@@ -37,6 +39,8 @@ class ChatterBotApiView(View):
 
         * The JSON data should contain a 'text' attribute.
         """
+        logger.info('Handling POST request')
+
         input_data = json.loads(request.body.decode('utf-8'))
 
         if 'text' not in input_data:
@@ -46,18 +50,27 @@ class ChatterBotApiView(View):
                 ]
             }, status=400)
 
-        # Send input to sentence classifyer and return response
-        database = neograph()
-        parsed_input = sentence_classifyer(input_data['text'], database)
-        response = parsed_input.handler() if parsed_input.handler else self.chat_handler(parsed_input)
-        response_data = response.serialize()
-# response: id, text, searc_text, conversation, persona, tags, in_response_to, created_at
-
         # Populate database with training data (only run once)
         #trainer = ChatterBotCorpusTrainer(self.chatterbot)
         #trainer.train('chatterbot.corpus.english')
 
-        return JsonResponse(response_data, status=200)
+        # Send input to sentence classifyer and return response
+        database = neograph()
+
+        if input_data['text']:
+            logger.info('Getting parsed input')
+            parsed_input = sentence_classifyer(input_data['text'], database)
+
+            logger.info('Running input handler')
+            response = parsed_input.handler() if parsed_input.handler else self.chat_handler(parsed_input)
+
+            response_data = response.serialize()
+            logger.info('Done with response')
+
+            # response: id, text, searc_text, conversation, persona, tags, in_response_to, created_at
+            return JsonResponse(response_data, status=200)
+        else:         
+            return JsonResponse({'text': ''}, status=200)
 
     def get(self, request, *args, **kwargs):
         """

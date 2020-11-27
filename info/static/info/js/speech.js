@@ -136,7 +136,7 @@ function voicePrompt(user) {
     let prompt = $('input.js-text').attr('placeholder');
 
     if (!isChrome) {
-        prompt = 'My speech recognition only works on Google Chrome.  You will have to <emphasis>type</emphasis> to <emphasis>speak</emphasis> <break time="1s"/>to me.'
+        prompt = 'My speech recognition only works on Google Chrome.  You will have to <emphasis>type</emphasis><break strength="weak"/>to <emphasis>speak</emphasis> to me.'
         $('#mic').prop('onclick', false)
         $('input.js-text').attr('placeholder','Type something and press Enter.');
     }

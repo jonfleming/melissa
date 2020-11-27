@@ -16,17 +16,17 @@ Neo4j:
         IsA Statement:
         ✔ query with UNION ALL to see if existing definitions are similar to Statement @done (11/25/2020, 7:12:00 PM)
             ✔ If existing defintion is similar replay with I knew that ...(existing definition) @done (11/25/2020, 7:12:02 PM)
-            ☐ Else, this is a new fact.  Add a new Synset and IsA Relationship. (requires nextId)
-            ☐ Reply with I've added that fact to my database
+            ✔ Else, this is a new fact.  Add a new Synset and IsA Relationship. (requires nextId) @done (11/27/2020, 12:29:54 AM)
+            ✔ Reply with I've added that fact to my database @done (11/27/2020, 12:29:56 AM)
             ✔ Return list of dictionaries from runner() @done (11/26/2020, 4:21:32 PM)
-            ☐ Split a sentence into: subj, verb, obj
+            ✔ Split a sentence into: subj, verb, obj @done (11/27/2020, 12:29:58 AM)
                 if sentence has more than 2 noun chunks and 1 ROOT, split on ROOT/AUX
                 root = [token for token in doc if token.dep_ == 'ROOT' and token.pos_ == 'AUX']
                 start = root[0].i + 1
                 obj = doc[start:]
 
 Sentence Classifyer/Handlers:
-    ☐ Parse the sentence and add the fact to wordnet/conceptnet if it doesn't already exist
+    ✔ Parse the sentence and add the fact to wordnet/conceptnet if it doesn't already exist @done (11/27/2020, 12:30:11 AM)
     ☐ Handle other sentence types
     ☐ Convert "my" to "your", etc. in response
     ☐ Handle contractions

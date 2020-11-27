@@ -35,13 +35,18 @@ class neograph:
             return []
 
     def run_list(self, queries):
+        count = 0
         for query in queries:
             print(query)
+            count += 1
             try:
                 self.get_session(WORDNET).write_transaction(self.runner, query)
             except:
                 print('Error', sys.exc_info())
-                                
+                return ['Error', sys.exc_info()]
+        
+        return [f"Success.  {count} queries executed"]
+        
     def close(self):
         self.driver.close()
 

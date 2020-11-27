@@ -1,12 +1,19 @@
 from chatterbot.conversation import Statement
 from modules.en_article import Article
+from datetime import datetime, time
 import spacy
 import re
+import logging
 
+nlp = spacy.load('en_core_web_md')
+logger = logging.getLogger(__name__)
 class sentence_classifyer:
-    def __init__(self, sentence, database, limit = 7):
-        self.nlp = spacy.load('en_core_web_md')
-        self.doc = self.nlp(sentence)
+    def __init__(self, sentence, database, limit = 10):
+        self.startTime = datetime.now()
+        logger.info(f"Initializing classifyer")
+        
+        self.doc = nlp(sentence)
+        logger.info(f"Doc created. Elapsed {self.elapsed()}")
 
         self.sentence_types = [
             { 'regex': '^how is', 'sentence_type': 'howIs', 'handler': self.question_handler },
@@ -37,33 +44,29 @@ class sentence_classifyer:
                 self.handler = sentence_type['handler']
                 break
 
+        logger.info(f"Done with initialization. Elapsed {self.elapsed()}")
+
+    def elapsed(self):
+        return datetime.now() - self.startTime
+
     def get_indefinite_article(self, noun):
         result = Article.getInstance().query(noun)
         return result['article'] + ' '
 
-    def has_determiner(self, noun_chunk):
-        token = self.doc[noun_chunk.start]
-        return (token.pos_ == 'DET')
+    def strip_determiner(self, noun_phrase):
+        has_determiner = re.match('(a |an |the )', noun_phrase, re.I)
+        determiner = None
+        noun = noun_phrase
 
-    def get_determiner(self, noun_chunk):
-        determiner = ''
-        tag = None
-        if self.has_determiner(noun_chunk):
-            determiner = self.doc[noun_chunk.start].text + ' '
-            tag = 'definite' if determiner == 'the' else 'indefinite'
-        
-        return determiner, tag              
+        if has_determiner:
+            words = noun_phrase.split(' ', 1)
+            determiner = words[0]
+            noun = words[1]
+            # if noun_phrase only has 1 word:
+            #   first, _, rest = noun_phrase.partition(' ')
+            #   noun = rest or first
 
-    def strip_determiner(self, noun_chunk):
-        determiner, tag = self.get_determiner(noun_chunk)
-        noun = noun_chunk.text
-
-        if determiner:
-            start = noun_chunk.start + 1
-            end = noun_chunk.end
-            noun = self.doc[start:end].text
-            
-        return noun
+        return determiner, noun
         
     def get_existing_definitions(self, lemma):
         query = f"MATCH (s:Lemma {{name: '{lemma}', pos:'n'}})-[r]->(n:Synset)" \
@@ -73,22 +76,22 @@ class sentence_classifyer:
         return self.database.run_query(query)
 
     def create_new_synset_and_relationship(self, id, subject, definition):
-        queries = [f"CREATE (s:Synset {{id: '{subject}.n.{id}', name: '{subject}', pos: 'n', definition: '{definition}', added:'true'}}) RETURN s;",
+        queries = [f"CREATE (s:Synset {{id: '{subject}.n.{id}', name: '{subject}', pos: 'n', definition: '{definition}', added:TRUE}}) RETURN s;",
             f"MATCH (n:Lemma {{name: '{subject}', pos:'n'}}) " \
             f"MATCH (s: Synset {{ id: '{subject}.n.{id}' }}) " \
             f"MERGE(n) - [r: IsA {{ dataset: 'custom', weight: 1.0, added: TRUE }}] -> (s) RETURN s;"]               
         self.database.run_list(queries)
 
     def create_new_definition(self, subject, definition):
-        queries = [f"`CREATE (s:Subject {{id: '{subject}', pos: 'n', definition: '{definition}'}}) RETURN s;"]
+        queries = [f"CREATE (s:Subject {{id: '{subject}', pos: 'n', definition: '{definition}'}}) RETURN s;"]
         self.database.run_list(queries)
 
     def find_similar(self, definition, records):
         pass # Use spacy to check similarity (vector?).  May need to build statement
-        doc1 = self.nlp(definition)
+        doc1 = nlp(definition)
 
         for record in records:
-            doc2 = self.nlp(record['definition'])
+            doc2 = nlp(record['definition'])
             similarity = doc1.similarity(doc2)
             if similarity > 0.85:
                 return record
@@ -96,66 +99,76 @@ class sentence_classifyer:
         return None
         
     def get_id(self, record):
-        return record['id'][-2:]
+        return record['id'][-2:] if record['id'].startswith(self.word) else self.default_id
 
     def question_handler(self):
-        noun_chunk = list(self.doc.noun_chunks)[1]
-        indefinite_article = None
-        determiner, tag = self.get_determiner(noun_chunk)
+        logger.info(f"Question handler. Elapsed {self.elapsed()}")
+        noun_phrase = list(self.doc.noun_chunks)[1].text
+        determiner, direct_subject = self.strip_determiner(noun_phrase)
 
-        subject = self.strip_determiner(noun_chunk) if determiner else noun_chunk.text
-        records = self.get_existing_definitions(subject)
+        logger.info(f"Get existing definitions. Elapsed {self.elapsed()}")
+        records = self.get_existing_definitions(direct_subject)
         reply = None
 
         if (len(records) > 0):
-            # Get first record with added=True or the record with lowest 2 digit id
+            # Get first record with added=True or the record with lowest 2 digit id and matching word
+            self.word = direct_subject
+            self.default_id = '99'
             record = next((record for record in iter(records) if record['added']), min(records, key=self.get_id))
-            reply = f"{determiner}{subject} is {record['definition']}"
+            reply = f"{determiner}{direct_subject} is {record['definition']}"
     
+        logger.info(f"Done with question handler. Elapsed {self.elapsed()}")
+
         return Statement(reply)
 
     def statement_handler(self, determiner, subject, object_clause):
-        records = self.get_existing_definitions(subject)        
+        logger.info(f"Statement handler. Elapsed {self.elapsed()}")
+        records = self.get_existing_definitions(subject)
+        logger.info(f"Done with Get existing definitions. Elapsed {self.elapsed()}")
         existing = self.find_similar(object_clause, records)
+        logger.info(f"Done with find similar. Elapsed {self.elapsed()}")
         response = None
 
         if existing:
-            statement = f"{determiner}{subject} is {existing['definition']}"
-            response = 'I knew that ' + statement
+            sentence = f"{determiner}{subject.replace('_', ' ')} is {existing['definition']}"
+            response = 'I knew that ' + sentence
         else:
             if len(records) > 0:
-                last_record = max(records, self.get_id)
-                id = int(last_record[-2:])
+                self.word = subject
+                self.default_id = '00'
+                last_record = max(records, key=self.get_id)
+                id = int(last_record['id'][-2:])
                 nextId = str(id + 1).zfill(2)
 
+                logger.info(f"Create new synset. Elapsed {self.elapsed()}")
                 self.create_new_synset_and_relationship(nextId, subject, object_clause)
             else:
+                logger.info(f"Create new definition. Elapsed {self.elapsed()}")
                 self.create_new_definition(subject, object_clause)
 
             response = 'I have added that fact to my database.'
 
+        logger.info(f"Done with Statement handler. Elapsed {self.elapsed()}")
         return Statement(response)
 
     def isA_statement_handler(self):
-        noun_chunk = list(self.doc.noun_chunks)[0]
+        logger.info(f"IsA statement handler. Elapsed {self.elapsed()}")
+        direct_subject = list(self.doc.noun_chunks)[0].text
         definition = list(self.doc.noun_chunks)[1].text
-        determiner = None
 
-        determiner, tag = self.get_determiner(noun_chunk.text)
-        subject = self.strip_determiner(noun_chunk.text) if determiner else noun_chunk.text        
+        determiner, subject = self.strip_determiner(direct_subject)
         subject = subject.replace(' ', '_')
 
         return self.statement_handler(determiner, subject, definition)
         
     def is_statement_handler(self):
+        logger.info(f"Is statement handler. Elapsed {self.elapsed()}")
         root = [token for token in self.doc if token.dep_ == 'ROOT' and token.pos_ == 'AUX']
         start = root[0].i
         direct_subject = self.doc[:start].text
         object_clause = self.doc[start+1:].text
 
-        determiner = None
-        determiner, tag = self.get_determiner(direct_subject.text)
-        subject = self.strip_determiner(direct_subject.text) if determiner else direct_subject.text        
+        determiner, subject = self.strip_determiner(direct_subject)
         subject = subject.replace(' ', '_')
 
         return self.statement_handler(determiner, subject, object_clause)
