@@ -16,15 +16,15 @@ class sentence_classifyer:
         logger.info(f"Doc created. Elapsed {self.elapsed()}")
 
         self.sentence_types = [
-            { 'regex': '^how is', 'sentence_type': 'howIs', 'handler': self.question_handler },
+            { 'regex': '^how is', 'sentence_type': 'howIs', 'handler': None },
             { 'regex': '^what is', 'sentence_type': 'whatIs', 'handler': self.question_handler },
-            { 'regex': '^when ', 'sentence_type': 'whyIs', 'handler': self.question_handler },
-            { 'regex': '^where is', 'sentence_type': 'whereIs', 'handler': self.question_handler },
+            { 'regex': '^when ', 'sentence_type': 'whyIs', 'handler': None },
+            { 'regex': '^where is', 'sentence_type': 'whereIs', 'handler': None },
             { 'regex': '^who is', 'sentence_type': 'whoIs', 'handler': self.question_handler },
-            { 'regex': '^why is', 'sentence_type': 'whyIs', 'handler': self.question_handler },
-            { 'regex': '^is ', 'sentence_type': 'whyIs', 'handler': self.question_handler },
-            { 'regex': '^does ', 'sentence_type': 'whyIs', 'handler': self.question_handler },
-            { 'regex': '^do ', 'sentence_type': 'whyIs', 'handler': self.question_handler },
+            { 'regex': '^why is', 'sentence_type': 'whyIs', 'handler': None },
+            { 'regex': '^is ', 'sentence_type': 'whyIs', 'handler': None },
+            { 'regex': '^does ', 'sentence_type': 'whyIs', 'handler': None },
+            { 'regex': '^do ', 'sentence_type': 'whyIs', 'handler': None },
             { 'regex': ' is a ', 'sentence_type': 'isA', 'handler': self.isA_statement_handler },
             { 'regex': ' is an ', 'sentence_type': 'isA', 'handler': self.isA_statement_handler },
             { 'regex': ' is .*\.$', 'sentence_type': 'isA', 'handler': self.is_statement_handler },
