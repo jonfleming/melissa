@@ -18,7 +18,9 @@ class sentence_classifyer:
             { 'regex': '^is ', 'sentence_type': 'whyIs', 'handler': self.question_handler },
             { 'regex': '^does ', 'sentence_type': 'whyIs', 'handler': self.question_handler },
             { 'regex': '^do ', 'sentence_type': 'whyIs', 'handler': self.question_handler },
-            { 'regex': 'is a', 'sentence_type': 'isA', 'handler': self.statement_handler },
+            { 'regex': ' is a ', 'sentence_type': 'isA', 'handler': self.isA_statement_handler },
+            { 'regex': ' is an ', 'sentence_type': 'isA', 'handler': self.isA_statement_handler },
+            { 'regex': ' is .*\.$', 'sentence_type': 'isA', 'handler': self.is_statement_handler },
             { 'regex': 'tell me', 'sentence_type': 'command', 'handler': self.statement_handler },
             { 'regex': 'give me', 'sentence_type': 'command', 'handler': self.statement_handler },
         ]
@@ -92,18 +94,6 @@ class sentence_classifyer:
                 return record
 
         return None
-
-    def create_isA_sentence(self, determiner, subject, definition):
-        indefinite_article = self.get_indefinite_article(subject)
-        has_determiner = re.match('^(a |an |the )', definition, re.I)
-        result = f'{determiner}{subject} is '
-
-        if has_determiner:
-            result += definition
-        else:
-            result += self.get_indefinite_article(definition) + definition
-
-        return result
         
     def get_id(self, record):
         return record['id'][-2:]
@@ -120,26 +110,17 @@ class sentence_classifyer:
         if (len(records) > 0):
             # Get first record with added=True or the record with lowest 2 digit id
             record = next((record for record in iter(records) if record['added']), min(records, key=self.get_id))
-            reply = self.create_isA_sentence(determiner, subject, record['definition'])
+            reply = f"{determiner}{subject} is {record['definition']}"
     
         return Statement(reply)
 
-    def statement_handler(self):
-        noun_chunk = list(self.doc.noun_chunks)[0]
-        definition = list(self.doc.noun_chunks)[1].text
-        determiner = None
-
-        determiner, tag = self.get_determiner(noun_chunk)
-        subject = self.strip_determiner(noun_chunk) if determiner else noun_chunk.text        
-        subject = subject.replace(' ', '_')
-
-        records = self.get_existing_definitions(subject)
+    def statement_handler(self, determiner, subject, object_clause):
+        records = self.get_existing_definitions(subject)        
+        existing = self.find_similar(object_clause, records)
         response = None
-        
-        existing = self.find_similar(definition, records)
-        
+
         if existing:
-            statement = self.create_isA_sentence(determiner, subject, existing['definition'])
+            statement = f"{determiner}{subject} is {existing['definition']}"
             response = 'I knew that ' + statement
         else:
             if len(records) > 0:
@@ -147,9 +128,34 @@ class sentence_classifyer:
                 id = int(last_record[-2:])
                 nextId = str(id + 1).zfill(2)
 
-                self.create_new_synset_and_relationship(nextId, subject, definition)
+                self.create_new_synset_and_relationship(nextId, subject, object_clause)
             else:
-                self.create_new_definition(subject, definition)
+                self.create_new_definition(subject, object_clause)
 
             response = 'I have added that fact to my database.'
+
         return Statement(response)
+
+    def isA_statement_handler(self):
+        noun_chunk = list(self.doc.noun_chunks)[0]
+        definition = list(self.doc.noun_chunks)[1].text
+        determiner = None
+
+        determiner, tag = self.get_determiner(noun_chunk.text)
+        subject = self.strip_determiner(noun_chunk.text) if determiner else noun_chunk.text        
+        subject = subject.replace(' ', '_')
+
+        return self.statement_handler(determiner, subject, definition)
+        
+    def is_statement_handler(self):
+        root = [token for token in self.doc if token.dep_ == 'ROOT' and token.pos_ == 'AUX']
+        start = root[0].i
+        direct_subject = self.doc[:start].text
+        object_clause = self.doc[start+1:].text
+
+        determiner = None
+        determiner, tag = self.get_determiner(direct_subject.text)
+        subject = self.strip_determiner(direct_subject.text) if determiner else direct_subject.text        
+        subject = subject.replace(' ', '_')
+
+        return self.statement_handler(determiner, subject, object_clause)

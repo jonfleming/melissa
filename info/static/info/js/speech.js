@@ -133,7 +133,13 @@ function say(id) {
 
 function voicePrompt(user) {
     // Prompt user to click mic
-    const prompt = $('input.js-text').attr('placeholder');
+    let prompt = $('input.js-text').attr('placeholder');
+
+    if (!isChrome) {
+        prompt = 'My speech recognition only works on Google Chrome.  You will have to <emphasis>type</emphasis> to <emphasis>speak</emphasis> <break time="1s"/>to me.'
+        $('#mic').prop('onclick', false)
+        $('input.js-text').attr('placeholder','Type something and press Enter.');
+    }
     //textToSpeech(`Hello ${user}. ${prompt}`);
     sayText(`Hello ${user}. ${prompt}`,2,1,3);
     document.cookie = 'name=' + user;

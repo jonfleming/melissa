@@ -2,7 +2,7 @@ const isChromium = window.chrome;
 const winNav = window.navigator;
 const vendorName = winNav.vendor;
 const isOpera = typeof window.opr !== "undefined";
-const isIEedge = winNav.userAgent.indexOf("Edge") > -1;
+const isIEedge = winNav.userAgent.indexOf("Edg") > -1;
 const isIOSChrome = winNav.userAgent.match("CriOS");
 let isChrome;
 
