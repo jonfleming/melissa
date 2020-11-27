@@ -55,7 +55,7 @@ class sentence_classifyer:
 
     def strip_determiner(self, noun_phrase):
         has_determiner = re.match('(a |an |the )', noun_phrase, re.I)
-        determiner = None
+        determiner = ''
         noun = noun_phrase
 
         if has_determiner:
