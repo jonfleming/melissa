@@ -6,7 +6,7 @@ from django.views.generic import View
 from django.http import JsonResponse
 from chatterbot import ChatBot
 from chatterbot.ext.django_chatterbot import settings
-from chatterbot.trainers import ChatterBotCorpusTrainer
+#from chatterbot.trainers import ChatterBotCorpusTrainer
 from chatterbot.conversation import Statement
 from modules.sentence_classifyer import sentence_classifyer
 from modules.neograph import neograph
@@ -51,8 +51,10 @@ class ChatterBotApiView(View):
             }, status=400)
 
         # Populate database with training data (only run once)
-        #trainer = ChatterBotCorpusTrainer(self.chatterbot)
-        #trainer.train('chatterbot.corpus.english')
+        # logger.info('Loading Training corpus')
+        # trainer = ChatterBotCorpusTrainer(self.chatterbot)
+        # trainer.train('chatterbot.corpus.english')
+        # logger.info('Training done')
 
         # Send input to sentence classifyer and return response
         database = neograph()
