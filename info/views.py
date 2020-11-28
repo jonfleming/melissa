@@ -70,6 +70,7 @@ class ChatterBotApiView(View):
             logger.info('Done with response')
 
             # response: id, text, searc_text, conversation, persona, tags, in_response_to, created_at
+            logger.info(f"Sentence: {input_data['text']}\nResponse: {response.text}\n")
             return JsonResponse(response_data, status=200)
         else:         
             return JsonResponse({'text': ''}, status=200)
@@ -90,6 +91,10 @@ class ChatterBotApiView(View):
     def gpt3_handler(self, input):
         import openai
         import os
+
+        sentence_ending = input.sentence[-1:]
+        if not sentence_ending in ['.','?','!']:
+            input.sentence += '.'
 
         openai.api_key = os.getenv('openapi_key')
         prompt = 'Jon is a wise and friendly chatbot that understands the English language.  Jon will remember what you tell him and try to answer any questions you have.\n' \
@@ -121,5 +126,5 @@ class ChatterBotApiView(View):
         openai_response = openai.Completion.create(engine="davinci", prompt=prompt, max_tokens=90, stop='Question:')
         response = openai_response.choices[0].text.split(':')[1]
         response = response.replace('Answer', '')
-        print(f"Statement: {input.sentence}\nResponse: {openai_response}\n")
+        logger.info(f"Sentence: {input.sentence}\nGPT Response: {response}\n")
         return Statement(response)

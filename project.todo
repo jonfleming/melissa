@@ -6,6 +6,11 @@ UI:
     ✔ Have one field for the final response (remove code that adds multiple 'final' elements) @done (11/5/2020, 7:16:58 PM)
     ✔ Get female voice (Chrome) @done (11/6/2020, 1:20:26 AM)
     ✔ Chrome Browser detection: @done (11/23/2020, 5:00:17 PM)
+    ☐ After the initial prompt, use cookies to deliver a shorter prompt
+        Hello <name> + 
+            Click the microphone and say something...
+            My speech recognition only works on Google Chrome.  
+            You will have to <emphasis>type</emphasis><break strength="weak"/>to <emphasis>speak</emphasis> to me.
 
 Neo4j: 
     ✔ Point jonfleming.net and jonfleming.info to Predator @done (9/21/2020, 10:41:38 PM)
@@ -15,9 +20,9 @@ Neo4j:
         ✔ query with UNION ALL to get added definition or definition with lowest id. @done (11/25/2020, 7:11:57 PM)
         IsA Statement:
         ✔ query with UNION ALL to see if existing definitions are similar to Statement @done (11/25/2020, 7:12:00 PM)
-            ✔ If existing defintion is similar replay with I knew that ...(existing definition) @done (11/25/2020, 7:12:02 PM)
+            ✔ If existing defintion is similar reply with "I knew that <existing definition>" @done (11/25/2020, 7:12:02 PM)
             ✔ Else, this is a new fact.  Add a new Synset and IsA Relationship. (requires nextId) @done (11/27/2020, 12:29:54 AM)
-            ✔ Reply with I've added that fact to my database @done (11/27/2020, 12:29:56 AM)
+            ✔ Reply with "I've added that fact to my database" @done (11/27/2020, 12:29:56 AM)
             ✔ Return list of dictionaries from runner() @done (11/26/2020, 4:21:32 PM)
             ✔ Split a sentence into: subj, verb, obj @done (11/27/2020, 12:29:58 AM)
                 if sentence has more than 2 noun chunks and 1 ROOT, split on ROOT/AUX
@@ -27,13 +32,15 @@ Neo4j:
 
 Sentence Classifyer/Handlers:
     ✔ Parse the sentence and add the fact to wordnet/conceptnet if it doesn't already exist @done (11/27/2020, 12:30:11 AM)
+    ☐ log input and response
+    ☐ Add a period to end of sentence if [.|?|!] not found
     ☐ Handle other sentence types
     ☐ Convert "my" to "your", etc. in response
     ☐ Handle contractions
 
     ☐ Put back logic to learn correct response
-    ☐ Use GPT3
-
+    ✔ Use GPT3 @done (11/28/2020, 12:57:55 PM)
+    
 Hosting:
     ✔ Move jonfleming.com to github pages @done (10/20/2020, 8:58:08 PM) (Using InfinityFree)
     ✔ Point fleming.ai to WordPress site @done (10/20/2020, 8:58:57 PM) (Using InfinityFree) 
@@ -53,8 +60,8 @@ SitePal:
     ✔ Add SitePal character for speech @done (11/20/2020, 12:18:02 PM)
     ✔ Create Photoface character @done (11/25/2020, 10:49:49 PM)
     ✔ Change subscription @done (11/25/2020, 10:49:50 PM)
-    ☐ Take a better picture (full height)
-    ☐ Revert back to Silver plan
+    ✔ Take a better picture (full height) @done (11/28/2020, 12:51:44 PM)
+    ✔ Revert back to Silver plan @done (11/28/2020, 12:51:49 PM)
 
 Documentation:
     ☐ Configuration: ALLOWED_HOSTS
