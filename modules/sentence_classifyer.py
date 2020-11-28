@@ -60,7 +60,7 @@ class sentence_classifyer:
 
         if has_determiner:
             words = noun_phrase.split(' ', 1)
-            determiner = words[0]
+            determiner = words[0] + ' '
             noun = words[1]
             # if noun_phrase only has 1 word:
             #   first, _, rest = noun_phrase.partition(' ')
