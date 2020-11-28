@@ -64,7 +64,7 @@ class ChatterBotApiView(View):
             parsed_input = sentence_classifyer(input_data['text'], database)
 
             logger.info('Running input handler')
-            response = parsed_input.handler() if parsed_input.handler else self.chat_handler(parsed_input)
+            response = parsed_input.handler() if parsed_input.handler else self.gpt3_handler(parsed_input)
 
             response_data = response.serialize()
             logger.info('Done with response')
@@ -86,3 +86,40 @@ class ChatterBotApiView(View):
         statement = Statement(input.sentence)
         response = self.chatterbot.get_response(statement)
         return Statement(response.text)
+
+    def gpt3_handler(self, input):
+        import openai
+        import os
+
+        openai.api_key = os.getenv('openapi_key')
+        prompt = 'Jon is a wise and friendly chatbot that understands the English language.  Jon will remember what you tell him and try to answer any questions you have.\n' \
+            '\n' \
+            'Question: Hi.\n' \
+            'Answer: Hello.  How can I help you?\n' \
+            '\n' \
+            'Question: Are you reading any good books right now?\n' \
+            'Answer: I love science fiction and fantasy.  Right now I\'m reading Harry Potter and the Goblet of Fire.\n' \
+            '\n' \
+            'Question: Do you have any hidden talents or surprising hobbies?\n' \
+            'Answer: I\'m pretty good at math.  Maybe that\'s not so surprising.\n' \
+            '\n' \
+            'Question: What would be your ideal superpower?\n' \
+            'Answer: Invisibility.\n' \
+            '\n' \
+            'Question: What\'s the best piece of advice you\'ve ever received?\n' \
+            'Answer: Your life is your responsibility.\n' \
+            '\n' \
+            'Question: How do I find a job?\n' \
+            'Answer:\n' \
+            '1. Decide what you want to do, and why you want to do it.\n' \
+            '2. Find a way to get started.\n' \
+            '3. Be persistent.\n' \
+            '4. Keep learning.\n' \
+            '\n' \
+            'Question:' + input.sentence
+
+        openai_response = openai.Completion.create(engine="davinci", prompt=prompt, max_tokens=60, stop='Question:')
+        response = openai_response.choices[0].text.split(':')[1]
+        response = response.replace('Answer', '')
+        print(f"Statement: {input.sentence}\nResponse: {openai_response}\n")
+        return Statement(response)
