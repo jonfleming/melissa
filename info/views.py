@@ -118,7 +118,7 @@ class ChatterBotApiView(View):
             '\n' \
             'Question:' + input.sentence
 
-        openai_response = openai.Completion.create(engine="davinci", prompt=prompt, max_tokens=60, stop='Question:')
+        openai_response = openai.Completion.create(engine="davinci", prompt=prompt, max_tokens=90, stop='Question:')
         response = openai_response.choices[0].text.split(':')[1]
         response = response.replace('Answer', '')
         print(f"Statement: {input.sentence}\nResponse: {openai_response}\n")
