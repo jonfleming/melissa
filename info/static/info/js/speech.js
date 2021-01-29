@@ -89,6 +89,12 @@ if (window.speechSynthesis.getVoices().length == 0) {
 }
 
 function textToSpeech(text) {
+    console.log('Text:', text);
+    //character.dynamicPlay({ do: 'look-right', say: 'Look over here.' });
+    character.dynamicPlay({say: text})
+}
+
+function textToSpeech_speechapi(text) {
     // get all voices that browser offers
     var available_voices = window.speechSynthesis.getVoices();
     var english_voice = '';
@@ -131,8 +137,9 @@ function say(id) {
     textToSpeech(text);
 }
 
-function voicePrompt(user) {
+function voicePrompt() {
     // Prompt user to click mic
+    const user = $('#user').val();
     let prompt = $('input.js-text').attr('placeholder');
 
     if (!isChrome) {
@@ -140,8 +147,8 @@ function voicePrompt(user) {
         $('#mic').prop('onclick', false)
         $('input.js-text').attr('placeholder','Type something and press Enter.');
     }
-    //textToSpeech(`Hello ${user}. ${prompt}`);
-    sayText(`Hello ${user}. ${prompt}`,2,1,3);
+    textToSpeech(`Hello ${user}. ${prompt}`);
+    //sayText(`Hello ${user}. ${prompt}`,2,1,3);
     document.cookie = 'name=' + user;
 }
 

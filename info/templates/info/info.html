@@ -20,7 +20,7 @@
       </div>
     </div>
     <div class="row container collapse" id="collapseContainer">
-      <div class="jumbotron col-sm-6 mt-1">
+      <div class="jumbotron col-sm-8 mt-1">
         <h1 class="jumbotron-heading text-xs-center"></h1>
         <p class="lead text-xs-center">
           This is a web app that allows you to talk to Jon's brain.
@@ -51,13 +51,28 @@
         </div>
 
       </div>
-      <div class="col-sm-6">
-        <script type="text/javascript" src="//vhss-d.oddcast.com/vhost_embed_functions_v2.php?acc=7817314&js=0">
-        </script>
-        <script type="text/javascript">
-          AC_VHost_Embed(7817314,300,400,'',1,1, 2715702, 0,1,0,'b9e8ed6ed7763e438fe89df7c36ddd36',0);
-        </script>
-      </div>
+
+
+      <script src="{% static 'info/js/charapiclient.js' %}"></script>
+      <div id="myDiv" class="col-sm-3" style="width:250px; height:200px;"></div>
+
+      <script>
+        var character;
+        document.addEventListener("DOMContentLoaded", function() {
+            character = CharApiClient.setupDiv("myDiv", {
+                width:250,
+                height:200,
+                endpoint:"http://fleming.technology:3000/animate",
+                character:"SusanHead",
+                cache:1
+            });
+        })
+
+        document.getElementById("myDiv").addEventListener("characterLoaded", function() {console.log("characterLoaded")});
+        document.getElementById("myDiv").addEventListener("autoStart", function() {console.log("autoStart")});
+        document.getElementById("myDiv").addEventListener("playComplete", function() {console.log("playComplete")});
+        document.getElementById("myDiv").addEventListener("embeddedCommand", function() {console.log("embeddedCommand")});
+      </script>
     </div>
 
     <hr class="my-3" />
@@ -84,20 +99,20 @@
           $("#start").click();
         }
       });
-      $("#start").click(function() {
-        const user = $('#user').val();
-        voicePrompt(user);
+      $("#start").click(function() {        
+        voicePrompt();
         $("#init").hide();
       });
     </script>
     <script type="text/javascript">
+      {% comment "sitePal" %} 
       //AC_VHost_Embed(7817314,300,400,'',1,1, 2714913, 0,1,0,'56d0583e963c97c521d6a347573c325c',0);
 
       function vh_sceneLoaded()
       {
         //the scene begins playing, add actions here
         //sayText('Welcome to our text to speech A P I example',2,1,3);
-      }
+      } {% endcomment %}
     </script>
   </body>
 </html>

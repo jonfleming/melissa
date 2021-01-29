@@ -38,7 +38,8 @@ $.ajaxSetup({
         }).done(function (statement) {
             if (statement.text) {
                 createRow(statement.text);
-                sayText(statement.text,2,1,3);
+                textToSpeech(statement.text);
+                //sayText(statement.text,2,1,3);
                 // Clear the input field
                 $input.val('');
     

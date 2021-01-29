@@ -30,6 +30,8 @@ Neo4j:
                 start = root[0].i + 1
                 obj = doc[start:]
 
+        ☐ Use TigerGraph cloud in place of Neo4j.  Use WordNet directly.  Use ConceptNet through API
+
 Sentence Classifyer/Handlers:
     ✔ Parse the sentence and add the fact to wordnet/conceptnet if it doesn't already exist @done (11/27/2020, 12:30:11 AM)
     ☐ log input and response
