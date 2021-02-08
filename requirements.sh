@@ -4,6 +4,7 @@
 # conda activate chatterbot
 pip install chatterbot==1.0.2
 pip install chatterbot-corpus
+pip install openai
 conda install -c conda-forge spacy
 conda install django
 conda install numpy==1.19.2
