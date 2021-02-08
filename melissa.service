@@ -1,0 +1,18 @@
+[Unit]                                                         
+Description=Melissa                                       
+After=network.target                                           
+                                                               
+[Service]                                                      
+Restart=no                                                 
+User=jon                                                    
+Group=nogroup                                                  
+                                                               
+Environment=PATH=/usr/bin:/usr/local/bin
+Environment=export neouri=bolt://fleming.technology:7687
+Environment=export neousername=neo4j
+Environment=export neopassword=amicus
+WorkingDirectory=/home/jon/projects/melissa                       
+ExecStart=/home/jon/projects/melissa/start.sh
+                                                               
+[Install]                                                      
+WantedBy=multi-user.target                                     
