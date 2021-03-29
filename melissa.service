@@ -8,9 +8,10 @@ User=jon
 Group=nogroup                                                  
                                                                
 Environment=PATH=/usr/bin:/usr/local/bin
-Environment=export neouri=bolt://fleming.technology:7687
-Environment=export neousername=neo4j
-Environment=export neopassword=amicus
+Environment=neouri=bolt://fleming.technology:7687
+Environment=neousername=neo4j
+Environment=neopassword=amicus
+Environment=openapi_key=sk-KRP4LkgbXNYE5LG6oLWR5ezRR3hx6bHyIQKzBUrI
 WorkingDirectory=/home/jon/projects/melissa                       
 ExecStart=/home/jon/projects/melissa/start.sh
                                                                

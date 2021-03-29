@@ -64,7 +64,8 @@ class ChatterBotApiView(View):
             parsed_input = sentence_classifyer(input_data['text'], database)
 
             logger.info('Running input handler')
-            response = parsed_input.handler() if parsed_input.handler else self.gpt3_handler(parsed_input)
+            # response = parsed_input.handler() if parsed_input.handler else self.gpt3_handler(parsed_input)
+            response = parsed_input.handler() if parsed_input.handler else self.chat_handler(parsed_input)
 
             response_data = response.serialize()
             logger.info('Done with response')
@@ -97,7 +98,7 @@ class ChatterBotApiView(View):
             input.sentence += '.'
 
         openai.api_key = os.getenv('openapi_key')
-        prompt = 'Jon is a wise and friendly chatbot that understands the English language.  Jon will remember what you tell him and try to answer any questions you have.\n' \
+        prompt = 'Melissa is a wise and friendly chatbot that understands the English language.  Melissa will remember what you tell her and try to answer any questions you have.\n' \
             '\n' \
             'Question: Hi.\n' \
             'Answer: Hello.  How can I help you?\n' \
